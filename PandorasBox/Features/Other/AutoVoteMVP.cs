@@ -61,7 +61,7 @@ namespace PandorasBox.Features.Other
             }
             catch (Exception e)
             {
-                PluginLog.Error(e, "Failed to vote!");
+                PluginLog.Error("Failed to vote!");
             }
         }
 
