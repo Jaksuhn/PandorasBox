@@ -32,6 +32,18 @@ namespace PandorasBox.Features.Targets
 
             [FeatureConfigOption("Exclude Timed Nodes", "", 1)]
             public bool ExcludeTimed = false;
+
+            [FeatureConfigOption("Island Sanctuary Nodes", "", 1)]
+            public bool doIslandNodes = true;
+
+            [FeatureConfigOption("Miner Nodes", "", 1)]
+            public bool doMinNodes = true;
+
+            [FeatureConfigOption("Botanist Nodes", "", 1)]
+            public bool doBtnNodes = true;
+
+            [FeatureConfigOption("Spearfishing Nodes", "", 1)]
+            public bool doFshNodes = true;
         }
 
         public Configs Config { get; private set; }
@@ -77,7 +89,7 @@ namespace PandorasBox.Features.Targets
             if (!baseObj->GetIsTargetable())
                 return;
 
-            if (nearestNode.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.CardStand && MJIManager.Instance()->IsPlayerInSanctuary != 0 && MJIManager.Instance()->CurrentMode == 1)
+            if (Config.doIslandNodes && nearestNode.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.CardStand && MJIManager.Instance()->IsPlayerInSanctuary != 0 && MJIManager.Instance()->CurrentMode == 1)
             {
                 if (!TaskManager.IsBusy)
                 {
@@ -93,19 +105,19 @@ namespace PandorasBox.Features.Targets
             if (Svc.Data.GetExcelSheet<GatheringPointTransient>().Any(x => x.RowId == nearestNode.DataId && (x.GatheringRarePopTimeTable.Value.RowId > 0 || x.EphemeralStartTime != 65535)) && Config.ExcludeTimed)
                 return;
 
-            if (job is 0 or 1 && Svc.ClientState.LocalPlayer.ClassJob.Id == 16 && !TaskManager.IsBusy)
+            if (Config.doMinNodes && job is 0 or 1 && Svc.ClientState.LocalPlayer.ClassJob.Id == 16 && !TaskManager.IsBusy)
             {
                 TaskManager.DelayNext("Gathering", (int)(Config.Throttle * 1000));
                 TaskManager.Enqueue(() => { TargetSystem.Instance()->OpenObjectInteraction(baseObj); return true; }, 1000);
                 return;
             }
-            if (job is 2 or 3 && Svc.ClientState.LocalPlayer.ClassJob.Id == 17 && !TaskManager.IsBusy)
+            if (Config.doBtnNodes && job is 2 or 3 && Svc.ClientState.LocalPlayer.ClassJob.Id == 17 && !TaskManager.IsBusy)
             {
                 TaskManager.DelayNext("Gathering", (int)(Config.Throttle * 1000));
                 TaskManager.Enqueue(() => { TargetSystem.Instance()->OpenObjectInteraction(baseObj); return true; }, 1000);
                 return;
             }
-            if (job is 4 or 5 && Svc.ClientState.LocalPlayer.ClassJob.Id == 18 && !TaskManager.IsBusy)
+            if (Config.doFshNodes && job is 4 or 5 && Svc.ClientState.LocalPlayer.ClassJob.Id == 18 && !TaskManager.IsBusy)
             {
                 TaskManager.DelayNext("Gathering", (int)(Config.Throttle * 1000));
                 TaskManager.Enqueue(() => { TargetSystem.Instance()->OpenObjectInteraction(baseObj); return true; }, 1000);
