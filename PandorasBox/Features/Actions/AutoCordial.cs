@@ -36,6 +36,9 @@ namespace PandorasBox.Features.Actions
 
             [FeatureConfigOption("Prevent Overcap")]
             public bool PreventOvercap = true;
+
+            [FeatureConfigOption("Use on Fisher")]
+            public bool UseOnFisher = false;
         }
 
         protected override DrawConfigDelegate DrawConfigTree => (ref bool _) =>
@@ -55,6 +58,7 @@ namespace PandorasBox.Features.Actions
             }
             ImGui.Checkbox("Invert Priority (Watered -> Regular -> Hi)", ref Config.InvertPriority);
             ImGui.Checkbox("Prevent Overcap", ref Config.PreventOvercap);
+            ImGui.Checkbox("Use on Fisher", ref Config.UseOnFisher);
         };
 
         private bool WillOvercap(int gp_recovery)
@@ -64,7 +68,8 @@ namespace PandorasBox.Features.Actions
 
         private void RunFeature(Framework framework)
         {
-            if (Svc.Condition[ConditionFlag.InCombat] || !(new List<uint>() { 16, 17, 18 }.Contains(Svc.ClientState.LocalPlayer.ClassJob.Id))) return;
+            if (Svc.Condition[ConditionFlag.InCombat] || Svc.ClientState.LocalPlayer.ClassJob.Id != 16 || Svc.ClientState.LocalPlayer.ClassJob.Id != 17) return;
+            if (Svc.ClientState.LocalPlayer.ClassJob.Id == 18 && !Config.UseOnFisher) return;
             if (!((Svc.ClientState.LocalPlayer.CurrentGp < Config.DefaultThreshold && Config.DirectionBelow) || (Svc.ClientState.LocalPlayer.CurrentGp > Config.DefaultThreshold && Config.DirectionAbove))) return;
 
             ActionManager* am = ActionManager.Instance();
