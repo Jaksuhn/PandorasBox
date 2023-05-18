@@ -22,15 +22,6 @@ namespace PandorasBox.Features.Other
 {
     public unsafe class AutoVoteMVP : Feature
     {
-        [PluginService]
-        internal static PartyList PartyList { get; private set; }
-
-        [PluginService]
-        public static ChatGui ChatGui { get; private set; }
-
-        [PluginService]
-        public static SigScanner SigScanner { get; private set; }
-
         public override string Name => "Auto Commend";
         public override string Description => "Auto commend at the end of a duty.";
 
@@ -72,7 +63,7 @@ namespace PandorasBox.Features.Other
 
             if (hud == null) throw new Exception("HUD is empty!");
 
-            var list = PartyList.Where(i =>
+            var list = Svc.Party.Where(i =>
             i.ObjectId != Svc.ClientState.LocalPlayer.ObjectId && i.GameObject != null)
                 .Select(PartyMember => (Math.Max(0, GetPartySlotIndex(PartyMember.ObjectId, hud) - 1), PartyMember));
 
@@ -109,7 +100,7 @@ namespace PandorasBox.Features.Other
 
             if (voteTarget.member == null) throw new Exception("No members! Can't vote!");
 
-            ChatGui.Print(new SeString(new List<Payload>()
+            Svc.Chat.Print(new SeString(new List<Payload>()
             {
                 new TextPayload("Vote to "),
                 voteTarget.member.ClassJob.GameData.Role switch
