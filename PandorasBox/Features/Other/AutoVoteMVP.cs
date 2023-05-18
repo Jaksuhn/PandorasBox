@@ -1,3 +1,5 @@
+// Credit to ArchiDog1998 for the original work: https://github.com/ArchiDog1998/VotePlease
+
 using Dalamud.Game;
 using Dalamud.Game.ClientState.Party;
 using Dalamud.Game.Gui;
