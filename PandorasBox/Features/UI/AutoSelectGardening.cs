@@ -2,6 +2,7 @@ using Dalamud.Logging;
 using Dalamud.Memory;
 using ECommons;
 using ECommons.DalamudServices;
+using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -36,6 +37,8 @@ namespace PandorasBox.Features.UI
 
             public bool IncludeFertilzing = false;
             public uint SelectedFertilizer = 0;
+
+            public bool AutoConfirm = false;
         }
 
         public Configs Config { get; private set; }
@@ -288,6 +291,80 @@ namespace PandorasBox.Features.UI
             return true;
         }
 
+        private bool ClickConfirm()
+        {
+            var gardeningMenu = (AtkUnitBase*)Svc.GameGui.GetAddonByName("HousingGardening", 1);
+
+            if (gardeningMenu is not null && gardeningMenu->IsVisible)
+            {
+                var values = stackalloc AtkValue[5];
+                values[0] = new AtkValue()
+                {
+                    Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int,
+                    Int = 0
+                };
+                values[1] = new AtkValue()
+                {
+                    Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Unk,
+                    Unk = 0
+                };
+                values[2] = new AtkValue()
+                {
+                    Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Unk,
+                    Unk = 0
+                };
+                values[3] = new AtkValue()
+                {
+                    Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Unk,
+                    Unk = 0
+                };
+                values[4] = new AtkValue()
+                {
+                    Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Unk,
+                    Unk = 0
+                };
+
+                gardeningMenu->FireCallback(5, values);
+                TaskManager.EnqueueImmediate(() => EzThrottler.Throttle("Clicking Confirm", 300));
+                TaskManager.EnqueueImmediate(() => EzThrottler.Check("Clicking Confirm"));
+
+                var values2 = stackalloc AtkValue[1];
+                values2[0] = new AtkValue()
+                {
+                    Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int,
+                    Int = -2
+                };
+
+                gardeningMenu->FireCallback(1, values);
+                TaskManager.EnqueueImmediate(() => EzThrottler.Throttle("Clicking Confirm", 300));
+                TaskManager.EnqueueImmediate(() => EzThrottler.Check("Clicking Confirm"));
+
+                var yesNo = (AtkUnitBase*)Svc.GameGui.GetAddonByName("SelectYesno", 1);
+                if (yesNo is not null && yesNo->IsVisible)
+                {
+                    var yesValue = stackalloc AtkValue[1];
+                    yesValue[0] = new AtkValue()
+                    {
+                        Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int,
+                        Int = 0
+                    };
+
+                    gardeningMenu->FireCallback(1, values);
+                    TaskManager.EnqueueImmediate(() => EzThrottler.Throttle("Clicking Yes", 300));
+                    TaskManager.EnqueueImmediate(() => EzThrottler.Check("Clicking Yes"));
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public override void Disable()
         {
             SaveConfig(Config);
@@ -370,6 +447,8 @@ namespace PandorasBox.Features.UI
                     ImGui.EndCombo();
                 }
             }
+
+            ImGui.Checkbox("Auto Confirm", ref Config.AutoConfirm);
         };
     }
 }
