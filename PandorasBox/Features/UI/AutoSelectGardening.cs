@@ -1,7 +1,6 @@
 using Dalamud.Logging;
 using Dalamud.Memory;
 using ECommons;
-using ECommons.Automation;
 using ECommons.DalamudServices;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game;
@@ -93,7 +92,7 @@ namespace PandorasBox.Features.UI
                                     ag->OpenForItemSlot(cont->Type, i, AgentModule.Instance()->GetAgentByInternalId(AgentId.Inventory)->GetAddonID());
                                     var contextMenu = (AtkUnitBase*)Svc.GameGui.GetAddonByName("ContextMenu", 1);
                                     if (contextMenu == null) return;
-                                    Callback.Fire(contextMenu, true, 0, 0, 0, 0, 0);
+                                    Callback(contextMenu, 0, 0, 0, 0, 0);
                                     Fertilized = true;
                                     return;
                                 }

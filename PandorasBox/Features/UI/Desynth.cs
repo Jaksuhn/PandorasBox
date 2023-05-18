@@ -1,7 +1,6 @@
 using ClickLib.Clicks;
 using Dalamud.Interface;
 using ECommons;
-using ECommons.Automation;
 using ECommons.DalamudServices;
 using ECommons.ImGuiMethods;
 using FFXIVClientStructs.FFXIV.Client.Game;
@@ -213,7 +212,7 @@ namespace PandorasBox.Features.UI
             if (Svc.Condition[Dalamud.Game.ClientState.Conditions.ConditionFlag.Occupied]) return false;
             var addon = (AtkUnitBase*)Svc.GameGui.GetAddonByName("SalvageDialog", 1);
             if (addon == null || !addon->IsVisible) return false;
-            Callback.Fire(addon, false, 0, false);
+            Callback(addon, 0, false);
             return true;
         }
 
@@ -222,7 +221,7 @@ namespace PandorasBox.Features.UI
             if (Svc.Condition[Dalamud.Game.ClientState.Conditions.ConditionFlag.Occupied]) return false;
             var addon = (AtkUnitBase*)Svc.GameGui.GetAddonByName("SalvageItemSelector", 1);
             if (addon == null) return null;
-            Callback.Fire(addon, false, 12, 0);
+            Callback(addon, 12, 0);
             return true;
         }
 
