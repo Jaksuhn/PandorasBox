@@ -1,12 +1,11 @@
 [submodule "PunishLib"]
 	path = PunishLib
 	url = https://github.com/PunishXIV/PunishLib
-[submodule "Ecommons"]
-	path = Ecommons
-	url = https://github.com/Taurenkey/Ecommons
+	master = master
 [submodule "ECommons"]
 	path = ECommons
 	url = https://github.com/Taurenkey/ECommons
+	master = master
 [submodule "FFXIVClientStructs"]
 	path = FFXIVClientStructs
 	url = https://github.com/Taurenkey/FFXIVClientStructs.git
