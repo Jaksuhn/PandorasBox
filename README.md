@@ -2,12 +2,10 @@
 
 ## my features' progress
 
-Auto-Summon Chocobo
-
 | Tweak                     | Todo                                 | Tested | Merged |
 | ------------------------- | ------------------------------------ | ------ | ------ |
 | Auto-Summon Chocobo       | ✔                                    | ✔      | ✔      |
-| Auto-Cordial              | find the source of the unknown delay | ✔      | ✔      |
+| Auto-Cordial              | find the source of the unknown delay | ✔      | ❌     |
 | GatherNodes               | Job/Island toggles in config         | ❌     | ❌     |
 | GatherNodes               | GPRequired config                    | ❌     | ❌     |
 | CommandFeature            | ✔                                    | ✔      | ✔      |
