@@ -156,11 +156,13 @@ namespace PandorasBox.Features.Other
             if (!Config.ChatAlerts) return;
 
             SeString message = new SeStringBuilder()
-            .AddUiForeground(514)
-            .Append("[FishNotify]")
+            .AddUiForeground(45)
+            .Append("[Pandora's Box]")
+            .AddUiForeground(62)
+            .Append(" [FishNotify]")
             .AddUiForegroundOff()
             .Append($" You hook a fish with a ")
-            .AddUiForeground(514)
+            .AddUiForeground(576)
             .Append(size)
             .AddUiForegroundOff()
             .Append(" bite.")
