@@ -27,3 +27,4 @@
 | lala/xivcollect lookup    | not started                          | ❌     | ❌     |
 | QuickGather ReEnabler     | not started                          | ❌     | ❌     |
 | QuickJoin PFs             | not started                          | ❌     | ❌     |
+| AutoSprint                | add in-housing blacklist             | ❌     | ❌     |
