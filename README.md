@@ -6,7 +6,7 @@
 | ------------------------- | ------------------------------------ | ------ | ------ |
 | Auto-Summon Chocobo       | ✔                                    | ✔      | ✔      |
 | Auto-Cordial              | find the source of the unknown delay | ✔      | ❌     |
-| GatherNodes               | Job/Island toggles in config         | ❌     | ❌     |
+| GatherNodes               | Job/Island toggles in config         | ✔      | ❌     |
 | GatherNodes               | GPRequired config                    | ❌     | ❌     |
 | CommandFeature            | ✔                                    | ✔      | ✔      |
 | Garden                    | AutoConfirm config                   | ❌     | ❌     |
