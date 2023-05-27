@@ -27,5 +27,7 @@
 | lala/xivcollect lookup    | not started                          | ❌     | ❌     |
 | QuickGather ReEnabler     | not started                          | ❌     | ❌     |
 | QuickJoin PFs             | not started                          | ❌     | ❌     |
-| AutoSprint                | add in-housing blacklist             | ❌     | ❌     |
+| AutoSprint                | add in-housing blacklist             | ✔      | ❌     |
 | CameraTrueNorthOnRespawn  | not started                          | ❌     | ❌     |
+| AutoMountAfterCombat      | ✔                                    | ✔      | ❌     |
+| AutoMountGathering        | use on island config                 | ✔      | ❌     |
