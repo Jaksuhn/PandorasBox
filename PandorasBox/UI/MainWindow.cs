@@ -2,6 +2,7 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Logging;
 using ECommons.DalamudServices;
 using ECommons.ImGuiMethods;
+using ECommons.Reflection;
 using ImGuiNET;
 using PandorasBox.Features;
 using PandorasBox.FeaturesSetup;
@@ -130,7 +131,7 @@ internal class MainWindow : Window
                 if (ThreadLoadImageHandler.TryGetTextureWrap(imagePath, out var logo))
                 {
                     ImGuiEx.ImGuiLineCentered("###Logo", () => { ImGui.Image(logo.ImGuiHandle, new(125f.Scale(), 125f.Scale())); });
-                    
+
                 }
 
                 ImGui.Spacing();
@@ -139,7 +140,7 @@ internal class MainWindow : Window
                 foreach (var window in Enum.GetValues(typeof(OpenWindow)))
                 {
                     if ((OpenWindow)window == OpenWindow.None) continue;
-                    if ((OpenWindow)window == OpenWindow.Commands) continue;
+                    // if ((OpenWindow)window == OpenWindow.Commands) continue;
 
                     if (ImGui.Selectable($"{window}", OpenWindow == (OpenWindow)window))
                     {
@@ -185,7 +186,7 @@ internal class MainWindow : Window
                         DrawFeatures(P.Features.Where(x => x.FeatureType == FeatureType.Targeting).ToArray());
                         break;
                     case OpenWindow.Commands:
-                        DrawCommands(P.Features.Where(x => x.FeatureType == FeatureType.Commands).ToArray());
+                        DrawCommands(P.Features.Where(x => x.FeatureType == FeatureType.Commands && (x.Name != "Test Command") && (x.Name != "YesAlready Toggle" || DalamudReflector.TryGetDalamudPlugin("Yes Already", out var pl, false, true))).ToArray());
                         break;
                     case OpenWindow.About:
                         AboutTab.Draw(P);
