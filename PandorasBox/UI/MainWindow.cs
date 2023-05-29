@@ -130,7 +130,7 @@ internal class MainWindow : Window
                 if (ThreadLoadImageHandler.TryGetTextureWrap(imagePath, out var logo))
                 {
                     ImGuiEx.ImGuiLineCentered("###Logo", () => { ImGui.Image(logo.ImGuiHandle, new(125f.Scale(), 125f.Scale())); });
-                    
+
                 }
 
                 ImGui.Spacing();
@@ -139,7 +139,7 @@ internal class MainWindow : Window
                 foreach (var window in Enum.GetValues(typeof(OpenWindow)))
                 {
                     if ((OpenWindow)window == OpenWindow.None) continue;
-                    if ((OpenWindow)window == OpenWindow.Commands) continue;
+                    // if ((OpenWindow)window == OpenWindow.Commands) continue;
 
                     if (ImGui.Selectable($"{window}", OpenWindow == (OpenWindow)window))
                     {
