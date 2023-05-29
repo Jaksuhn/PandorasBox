@@ -67,13 +67,19 @@ namespace PandorasBox.Features.UI
             if (agent == null) return;
             if (ImGui.BeginCombo("Select Friend", ""))
             {
+                PluginLog.Log("in button" + agent->Count);
                 for (var i = 0U; i < agent->Count; i++)
                 {
+                    PluginLog.Log("in loop");
                     var friend = agent->GetFriend(i);
-                    if (friend == null) continue;
+                    if (friend == null)
+                    {
+                        PluginLog.Log("friend is null");
+                        continue;
+                    }
                     if (friend->HomeWorld != Svc.ClientState.LocalPlayer.HomeWorld.Id) continue;
                     var name = MemoryHelper.ReadString(new nint(friend->Name), 32);
-                    PluginLog.Log(name);
+                    PluginLog.Log("in loop" + name);
                     if (ImGui.Selectable(name, Config.SelectedFriend == name))
                     {
                         Config.SelectedFriend = name;
