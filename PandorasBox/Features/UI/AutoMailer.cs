@@ -10,9 +10,6 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using System.Collections.Generic;
 using ECommons;
 using ImGuiNET;
-using System.Linq;
-using System.Runtime.InteropServices;
-using FFXIVClientStructs.FFXIV.Client.UI.Info;
 using Dalamud.Memory;
 using ECommons.Logging;
 
@@ -30,7 +27,7 @@ namespace PandorasBox.Features.UI
 
         public class Configs : FeatureConfig
         {
-            public string SelectedFriend = "Annie Starbinder";
+            public string SelectedFriend = "";
             public uint SelectedItem = 17836;
             public int position_in_list = 1;
         }
@@ -38,61 +35,36 @@ namespace PandorasBox.Features.UI
         public Configs Config { get; private set; }
         public override bool UseAutoConfig => false;
 
-        [FFXIVClientStructs.Attributes.Agent(AgentId.SocialFriendList)]
-        [StructLayout(LayoutKind.Explicit, Size = 0xC8)]
-        public unsafe struct AgentFriendList
-        {
-            public static AgentFriendList* Instance() => (AgentFriendList*)AgentModule.Instance()->GetAgentByInternalId(AgentId.SocialFriendList);
-
-            [FieldOffset(0x00)] public AgentInterface AgentInterface;
-            [FieldOffset(0x28)] public InfoProxyFriendList* InfoProxy;
-
-            public uint Count => InfoProxy->InfoProxyCommonList.InfoProxyPageInterface.InfoProxyInterface.GetEntryCount();
-            public InfoProxyCommonList.CharacterData* GetFriend(uint index) => InfoProxy->InfoProxyCommonList.GetEntry(index);
-            public InfoProxyCommonList.CharacterData* this[uint index] => GetFriend(index);
-        }
-
-        // private List<AtkValue> friends = Enumerable.Range(28, 201)
-        //       .Select(i => ((AtkUnitBase*)Svc.GameGui.GetAddonByName("LetterAddress"))->AtkValues[i])
-        //       .Where(atkValue => atkValue.String != null)
-        //       .ToList();
-
         protected override DrawConfigDelegate DrawConfigTree => (ref bool _) =>
         {
-            // List<AtkValue> friends = Enumerable.Range(28, 201)
-            //     .Select(i => addon->AtkValues[i])
-            //     .Where(atkValue => atkValue.String != null)
-            //     .ToList();
             var agent = AgentFriendList.Instance();
             if (agent == null) return;
             if (ImGui.BeginCombo("Select Friend", ""))
             {
-                PluginLog.Log("in button" + agent->Count);
+                if (ImGui.Selectable("", Config.SelectedFriend == ""))
+                {
+                    Config.SelectedFriend = "";
+                }
                 for (var i = 0U; i < agent->Count; i++)
                 {
-                    PluginLog.Log("in loop");
                     var friend = agent->GetFriend(i);
                     if (friend == null)
                     {
-                        PluginLog.Log("friend is null");
+                        PluginLog.Log("Null friend entry. Skipping.");
                         continue;
                     }
                     if (friend->HomeWorld != Svc.ClientState.LocalPlayer.HomeWorld.Id) continue;
-                    var name = MemoryHelper.ReadString(new nint(friend->Name), 32);
-                    PluginLog.Log("in loop" + name);
-                    if (ImGui.Selectable(name, Config.SelectedFriend == name))
+                    try
                     {
-                        Config.SelectedFriend = name;
+                        var name = MemoryHelper.ReadString(new nint(friend->Name), 32);
+                        var selected = ImGui.Selectable(name, Config.SelectedFriend == name);
+                        if (selected)
+                        {
+                            Config.SelectedFriend = name;
+                        }
                     }
+                    catch { return; }
                 }
-                // for (var i = 0; i < friends.Count; i++)
-                // {
-                //     if (ImGui.Selectable(friends[i].ToString(), Config.SelectedFriend == friends[i].ToString()))
-                //     {
-                //         Config.SelectedFriend = friends[i].ToString();
-                //     }
-                // }
-                ImGui.EndCombo();
             }
         };
 
@@ -123,31 +95,32 @@ namespace PandorasBox.Features.UI
                 if (letterslistWindow == null)
                     return false;
 
+                Callback.Fire(letterslistWindow, false, 1, 0, 0, 0);
 
-                var NewButton = stackalloc AtkValue[4];
-                NewButton[0] = new()
-                {
-                    Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int,
-                    Int = 1,
-                };
-                NewButton[1] = new()
-                {
-                    Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int,
-                    Int = 0,
-                };
-                NewButton[2] = new()
-                {
-                    Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int,
-                    Int = 0,
-                };
+                // var NewButton = stackalloc AtkValue[4];
+                // NewButton[0] = new()
+                // {
+                //     Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int,
+                //     Int = 1,
+                // };
+                // NewButton[1] = new()
+                // {
+                //     Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int,
+                //     Int = 0,
+                // };
+                // NewButton[2] = new()
+                // {
+                //     Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int,
+                //     Int = 0,
+                // };
 
-                NewButton[3] = new()
-                {
-                    Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int,
-                    Int = 0,
-                };
+                // NewButton[3] = new()
+                // {
+                //     Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int,
+                //     Int = 0,
+                // };
 
-                letterslistWindow->FireCallback(1, NewButton);
+                // letterslistWindow->FireCallback(1, NewButton);
                 return true;
             }
             catch
@@ -171,15 +144,15 @@ namespace PandorasBox.Features.UI
                 if (letterEditorWindow == null)
                     return false;
 
+                Callback.Fire(letterEditorWindow, false, 7);
+                // var DropDownMenu = stackalloc AtkValue[1];
+                // DropDownMenu[0] = new()
+                // {
+                //     Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int,
+                //     Int = 7,
+                // };
 
-                var DropDownMenu = stackalloc AtkValue[1];
-                DropDownMenu[0] = new()
-                {
-                    Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int,
-                    Int = 7,
-                };
-
-                letterEditorWindow->FireCallback(1, DropDownMenu);
+                // letterEditorWindow->FireCallback(1, DropDownMenu);
                 return true;
             }
             catch
@@ -269,35 +242,36 @@ namespace PandorasBox.Features.UI
                         var contextMenu = (AtkUnitBase*)Svc.GameGui.GetAddonByName("ContextMenu", 1);
                         if (contextMenu != null)
                         {
-                            var values = stackalloc AtkValue[5];
-                            values[0] = new AtkValue()
-                            {
-                                Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int,
-                                Int = 0
-                            };
-                            values[1] = new AtkValue()
-                            {
-                                Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int,
-                                UInt = 0
-                            };
-                            values[2] = new AtkValue()
-                            {
-                                Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.UInt,
-                                UInt = 0
-                            };
-                            values[3] = new AtkValue()
-                            {
-                                // Unknown Type: 0
-                                Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.UInt,
-                                UInt = 0
-                            };
-                            values[4] = new AtkValue()
-                            {
-                                // Unknown Type: 0
-                                Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.UInt,
-                                UInt = 0
-                            };
-                            contextMenu->FireCallback(5, values, (void*)1);
+                            Callback.Fire(contextMenu, false, 0, 0u, 0u, 0u, 0u);
+                            // var values = stackalloc AtkValue[5];
+                            // values[0] = new AtkValue()
+                            // {
+                            //     Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int,
+                            //     Int = 0
+                            // };
+                            // values[1] = new AtkValue()
+                            // {
+                            //     Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int,
+                            //     UInt = 0
+                            // };
+                            // values[2] = new AtkValue()
+                            // {
+                            //     Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.UInt,
+                            //     UInt = 0
+                            // };
+                            // values[3] = new AtkValue()
+                            // {
+                            //     // Unknown Type: 0
+                            //     Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.UInt,
+                            //     UInt = 0
+                            // };
+                            // values[4] = new AtkValue()
+                            // {
+                            //     // Unknown Type: 0
+                            //     Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.UInt,
+                            //     UInt = 0
+                            // };
+                            // contextMenu->FireCallback(5, values, (void*)1);
 
                             // TaskManager.Enqueue(() => ActionManager.Instance()->GetActionStatus(ActionType.Item, itemId, Svc.ClientState.LocalPlayer.ObjectId) == 0);
 
@@ -374,6 +348,7 @@ namespace PandorasBox.Features.UI
 
         public override void Enable()
         {
+            Config = LoadConfig<Configs>() ?? new Configs();
             // OverlayWindow = new(this);
             // P.Ws.AddWindow(OverlayWindow);
             base.Enable();
@@ -381,6 +356,7 @@ namespace PandorasBox.Features.UI
 
         public override void Disable()
         {
+            SaveConfig(Config);
             // P.Ws.RemoveWindow(OverlayWindow);
             // OverlayWindow = null;
             base.Disable();
