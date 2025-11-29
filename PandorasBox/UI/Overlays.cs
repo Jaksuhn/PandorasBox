@@ -1,10 +1,8 @@
-using Dalamud.Interface.Windowing;
-using Dalamud.Bindings.ImGui;
-using PandorasBox.Features;
 using System.Linq;
-using ECommons.Reflection;
+using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Windowing;
 using ECommons.DalamudServices;
-using System;
+using PandorasBox.Features;
 
 namespace PandorasBox.UI
 {
@@ -31,21 +29,17 @@ namespace PandorasBox.UI
             P.Ws.AddWindow(this);
         }
 
-        public void ForceDisableErrors()
+        public override void Draw()
         {
-            DalamudErrorBs = (bool)this.GetFoP("hasError");
-
-            if (this.DalamudErrorBs)
-                this.SetFoP("hasError", false);
+            try
+            {
+                Feature.Draw();
+            }
+            catch (System.Exception ex)
+            {
+                Svc.Log.Error(ex, $"Error in overlay Draw() for feature {Feature.Name}");
+            }
         }
-
-        public override void PreDraw()
-        {
-            ForceDisableErrors();
-            base.PreDraw();
-        }
-
-        public override void Draw() => Feature.Draw();
 
         public override bool DrawConditions() => Feature.Enabled && Feature.DrawConditions();
     }
